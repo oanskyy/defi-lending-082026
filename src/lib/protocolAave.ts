@@ -1,6 +1,13 @@
 import { AaveV3Sepolia } from "@bgd-labs/aave-address-book"
 import { IUiPoolDataProvider_ABI } from "@bgd-labs/aave-address-book/abis"
 import type { PublicClient } from "viem"
+import { createPublicClient, http } from "viem"
+import { sepolia } from "viem/chains"
+
+const publicClient = createPublicClient({
+	chain: sepolia,
+	transport: http()
+})
 
 export async function getAaveReserves(client: PublicClient) {
 	return client.readContract({
