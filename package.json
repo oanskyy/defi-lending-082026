@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@bgd-labs/aave-address-book": "^4.44.22",
     "@tanstack/react-query": "^5.101.4",
     "next": "16.3.0",
     "react": "19.2.8",
