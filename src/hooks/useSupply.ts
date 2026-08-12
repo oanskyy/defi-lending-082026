@@ -3,15 +3,14 @@
 import { useWriteContract, useWaitForTransactionReceipt } from "wagmi"
 import { parseUnits } from "viem"
 
+import { ERC20_ABI, AAVE_POOL_ABI } from "@/lib/abis"
 import { AaveV3Sepolia } from "@bgd-labs/aave-address-book"
-import { ERC20_ABI } from "@/lib/abis"
-import { AAVE_POOL_ABI } from "@/lib/abis"
 
 export function useSupply() {
 	const {
-		data: hash,
 		writeContract,
-		isPending: isWriting,
+		data: hash,
+		isPending: isWalletPending,
 		error
 	} = useWriteContract()
 
@@ -20,28 +19,51 @@ export function useSupply() {
 			hash
 		})
 
-	const supply = ({
-		tokenAddress,
-		amount,
-		decimals,
-		userAddress
-	}: {
-		tokenAddress: `0x${string}`
-		amount: string
+	const supply = async (
+		tokenAddress: `0x${string}`,
+		amount: string,
 		decimals: number
-		userAddress: `0x${string}`
-	}) => {
+	) => {
 		const parsedAmount = parseUnits(amount, decimals)
 
-		// TODO: approve first
+		await writeContract({
+			address: tokenAddress,
+			abi: ERC20_ABI,
+			functionName: "approve",
+			args: [AaveV3Sepolia.POOL, parsedAmount]
+		})
 	}
 
 	return {
 		supply,
 		hash,
-		isWriting,
+		isWalletPending,
 		isConfirming,
 		isConfirmed,
 		error
 	}
 }
+// The important mental model
+//              useSupply()
+//                  │
+//         ┌────────┴────────┐
+//         ▼                 ▼
+//     APPROVE             SUPPLY
+//         │                 │
+//      ERC20              Aave Pool
+//         │                 │
+//         └────────┬────────┘
+//                  ▼
+//              blockchain
+
+// And your state is now derived from the transaction lifecycle, rather than inventing random UI state:
+
+// idle
+//  ↓
+// approving
+//  ↓
+// approved
+//  ↓
+// supplying
+//  ↓
+// success

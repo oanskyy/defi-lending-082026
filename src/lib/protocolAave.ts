@@ -20,6 +20,26 @@ export async function getAaveReserves() {
 	})
 }
 
+// Full read path before touching writes.
+
+// Aave contracts
+//       ↓
+// readContract()
+//       ↓
+// raw Aave reserve data
+//       ↓
+// Aave mapper
+//       ↓
+// Asset domain model
+//       ↓
+// MarketTable
+//       ↓
+// USER SEES REAL MARKET DATA
+
+// So Milestone 3.4 established:
+
+// "I can take raw on-chain protocol data, isolate the protocol-specific infrastructure, transform it into an application/domain model, and render that model without the UI knowing anything about Aave."
+
 // Aave infrastructure
 //        │
 //        ├── Aave addresses
