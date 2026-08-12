@@ -27,7 +27,7 @@ export default function Home() {
 		async function load() {
 			console.log("LOAD STARTED")
 
-			const result = await getAaveReserves(client)
+			const result = await getAaveReserves()
 
 			console.log("RAW RESULT", result)
 
