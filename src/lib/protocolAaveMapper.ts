@@ -7,9 +7,9 @@ export function mapAaveReserveToAsset(reserve: AaveReserve): Asset {
 		symbol: reserve.symbol,
 		decimals: Number(reserve.decimals),
 
-		supplyAPY: 0,
-		borrowAPY: 0,
-		liquidity: 0,
+		supplyAPY: Number(reserve.liquidityRate) / 1e25,
+		borrowAPY: Number(reserve.variableBorrowRate) / 1e25,
+		liquidity: Number(reserve.availableLiquidity),
 		utilizationRate: 0
 	}
 }
@@ -26,7 +26,6 @@ export function mapAaveReserveToAsset(reserve: AaveReserve): Asset {
 //      ├── availableLiquidity → liquidity
 //      │
 //      └── debt ─────────────→ utilizationRate
-
 
 // I deliberately keep the protocol model separate from the application domain model. Aave's AggregatedReserveData contains protocol-specific fields and representations that aren't meaningful to the UI. The mapper acts as an anti-corruption boundary: it normalizes and curates that external data into the Asset model our application actually needs. That means if we replace Aave with another lending protocol, the protocol adapter and mapper can change without forcing changes through the React component tree.
 
@@ -46,4 +45,3 @@ export function mapAaveReserveToAsset(reserve: AaveReserve): Asset {
 // lending.ts
 //    ↓
 // what OUR application needs
-
