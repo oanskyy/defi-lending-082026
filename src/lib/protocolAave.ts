@@ -1,13 +1,9 @@
 import { AaveV3Sepolia } from "@bgd-labs/aave-address-book"
 import { IUiPoolDataProvider_ABI } from "@bgd-labs/aave-address-book/abis"
-import type { PublicClient } from "viem"
-import { createPublicClient, http } from "viem"
-import { sepolia } from "viem/chains"
+import { ERC20_ABI, AAVE_POOL_ABI } from "@/lib/abis"
 
-const publicClient = createPublicClient({
-	chain: sepolia,
-	transport: http()
-})
+import type { PublicClient } from "viem"
+
 
 export async function getAaveReserves(client: PublicClient) {
 	return client.readContract({
@@ -18,17 +14,25 @@ export async function getAaveReserves(client: PublicClient) {
 	})
 }
 
-// src/lib/aave.ts
+// Aave infrastructure
+//        │
+//        ├── Aave addresses
+//        ├── Aave ABIs
+//        ├── Aave raw contract calls
+//        └── Aave-specific configuration
+
+//    src/lib/aave.ts
 //        │
 //        ├── addresses
 //        ├── ABI
 //        └── Aave configuration
 
-// lib/
-// ├── aave/
-// │   ├── client.ts
-// │   ├── mapper.ts
-// │   └── types.ts
+// src/lib/
+// └── protocolAave/
+//     ├── client.ts       ← readContract / writeContract plumbing
+//     ├── contracts.ts    ← addresses + ABIs
+//     ├── mapper.ts       ← Aave → domain
+//     └── types.ts        ← Aave raw types
 
 // aave.ts
 //     ↓
