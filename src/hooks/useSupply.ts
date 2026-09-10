@@ -1,6 +1,7 @@
 "use client"
+// transaction lifecycle,
 // approve → wait → supply → wait → refresh → optimistic UX
-// multi-step async workflow.
+// multi-step tx async workflow.
 
 import { useWaitForTransactionReceipt, useWriteContract } from "wagmi"
 import { parseUnits } from "viem"
@@ -22,6 +23,9 @@ export function useSupply() {
 		isPending: isSupplyPending,
 		error: supplyError
 	} = useWriteContract()
+
+	// 	Why are useWriteContract() called twice?
+	// Because we have two independent transactions.
 
 	const { isLoading: isApprovalConfirming, isSuccess: isApprovalConfirmed } =
 		useWaitForTransactionReceipt({
